@@ -3,6 +3,7 @@ const db = require("./config/keys").mongoURI;
 const app = express();
 const zones = require("./data/zones");
 const mongoose = require("mongoose");
+const zonesRouter = require("./routes/zones");
 
 app.use(express.json());
 
@@ -13,18 +14,7 @@ mongoose
   })
   .then(() => console.log("Mongos a gogo"));
 
-app.get("/", (req, res) => {
-  res.send("Hello word");
-});
-
-app.get("/zones", (req, res) => {
-  res.json(zones);
-});
-
-app.get("/zones/:id", (req, res) => {
-  const zone = zones.find((z) => z._id === req.params.id);
-  res.json(zone);
-});
+app.use("/api/zones", zonesRouter);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
