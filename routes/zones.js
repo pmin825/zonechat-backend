@@ -11,14 +11,9 @@ router.get("/zones", (req, res) => {
   res.json(zones);
 });
 
-// router.get("/zones/:id", (req, res) => {
-//   const zone = zones.find((z) => z._id === req.params.id);
-//   res.json(zone);
-// });
-
 router.get("/:id", (req, res) => {
   Zone.findById(req.params.id)
-    .then((zones) => res.json(zones))
+    .then((zone) => res.json(zone))
     .catch((err) => res.json(err));
 });
 

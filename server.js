@@ -4,6 +4,7 @@ const app = express();
 const zones = require("./data/zones");
 const mongoose = require("mongoose");
 const zonesRouter = require("./routes/zones");
+const usersRouter = require("./routes/users");
 
 app.use(express.json());
 
@@ -15,6 +16,7 @@ mongoose
   .then(() => console.log("Mongos a gogo"));
 
 app.use("/api/zones", zonesRouter);
+app.use("/api/users", usersRouter);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
