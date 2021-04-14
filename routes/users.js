@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const User = require("../model/user");
 const bcrypt = require("bcryptjs");
-const { response } = require("express");
+const jwt = require("jsonwebtoken");
+const auth = require("../middleware/auth");
 
 router.get("/register", (req, res) => {
   User.find()
@@ -37,8 +38,17 @@ router.post("/register", async (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
-  User.findByIdAndDelete(req.params.id)
+router.get("/profile", auth, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  res.json({
+    id: user._id,
+    name: user.name,
+    date: user.date,
+  });
+});
+
+router.delete("/profile", auth, (req, res) => {
+  User.findByIdAndDelete(req.user._id)
     .then(() => res.json("User Deleted"))
     .catch((err) => res.status(400).json(err));
 });
@@ -59,9 +69,37 @@ router.post("/login", async (req, res) => {
     if (!result) {
       return res.status(400).send({ msg: "Invalid Credentials" });
     } else {
-      res.send("Authentication Successful");
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+      res.json({
+        token: token,
+        user: {
+          id: user._id,
+          name: user.name,
+          date: user.date,
+        },
+      });
     }
   });
+});
+
+router.post("/tokenIsValid", async (req, res) => {
+  try {
+    const token = req.header("auth-token");
+    if (!token) {
+      return res.json(false);
+    }
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    if (!verified) {
+      return res.json(false);
+    }
+    const user = await User.findById(verified._id);
+    if (!user) {
+      return res.json(false);
+    }
+    return res.json(true);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
 });
 
 module.exports = router;

@@ -5,6 +5,7 @@ const zones = require("./data/zones");
 const mongoose = require("mongoose");
 const zonesRouter = require("./routes/zones");
 const usersRouter = require("./routes/users");
+require("dotenv").config();
 
 app.use(express.json());
 
