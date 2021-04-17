@@ -32,7 +32,7 @@ router.post("/register", async (req, res) => {
 
       newUser
         .save()
-        .then((user) => res.json("New User Added"))
+        .then((user) => res.json( user))
         .catch((err) => res.status(400).json(err));
     });
   });

@@ -4,6 +4,11 @@ const zoneSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
+    maxlength: 30
+  },
+  createdBy: {
+    type: String,
+    default: "unknown"
   },
   date: {
     type: Date,
