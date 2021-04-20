@@ -17,6 +17,9 @@ router.post("/register", async (req, res) => {
   if (req.body.name.length > 15) {
     return res.status(400).json({ msg: "Max character length is 15" });
   }
+  if (req.body.name === "General Lobby") {
+    return res.status(400).json({ msg: "Choose a new Zone name" });
+  }
   const user = await User.findOne({ name: req.body.name });
   if (user) {
     return res.status(400).json({ msg: "Username is already taken" });
@@ -32,7 +35,7 @@ router.post("/register", async (req, res) => {
 
       newUser
         .save()
-        .then((user) => res.json( user))
+        .then((user) => res.json(user))
         .catch((err) => res.status(400).json(err));
     });
   });
