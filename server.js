@@ -3,7 +3,7 @@ const db = require("./config/keys").mongoURI;
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
-const zones = require("./data/zones");
+// const zones = require("./data/zones");
 const mongoose = require("mongoose");
 const zonesRouter = require("./routes/zones");
 const usersRouter = require("./routes/users");
@@ -40,12 +40,17 @@ io.on("connect", (socket) => {
     });
   });
 
-  socket.on("zoneJoined", ({ zone }) => {
-    io.to(zone).emit("newMessage", {
+  socket.on("zoneJoined", ({ oldZone, newZone }) => {
+    socket.leave(oldZone);
+    io.to(oldZone).emit("newMessage", {
+      name: socket.id,
+      msg: `${socket.id} just left "${oldZone}"`,
+    });
+    io.to(newZone).emit("newMessage", {
       name: socket.id,
       msg: `${socket.id} just joined the Chat...`,
     });
-    socket.join(zone);
+    socket.join(newZone);
   });
 
   socket.on("disconnect", () => {
